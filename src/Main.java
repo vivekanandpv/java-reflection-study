@@ -1,18 +1,35 @@
+import java.lang.reflect.Method;
+
 public class Main {
     public static void main(String[] args) {
-        //  Instance of Class<T> is the class or interface at runtime
-        //  This provides information about a given class or interface,
-        //  such as its name, superclass, interfaces, fields, and methods
-        Class<Integer> intClassObject = int.class;
-        Class<Integer> integerClassObject = Integer.TYPE;    //  of primitive
-        Class<Integer> integerWrapperClassObject = Integer.class;    //  of wrapper
+        Class<Sample> sampleClassObject = Sample.class;
 
-        System.out.println(intClassObject.getName());
-        System.out.println(integerClassObject.getName());
-        System.out.println(integerWrapperClassObject.getName());
+        Method[] declaredMethods = sampleClassObject.getDeclaredMethods();
+        Method[] allMethods = sampleClassObject.getMethods();
 
-        Integer j = 100;
-        boolean instance = integerWrapperClassObject.isInstance(j);
-        System.out.println(instance);
+        for (Method m: declaredMethods) {
+            System.out.println("Declared Methods: " + m.toString());
+        }
+
+        System.out.println("-------------------------------------");
+
+        for (Method m: allMethods) {
+            System.out.println("All Methods: " + m.toString());
+        }
+    }
+}
+
+class Sample {
+    public void voidMethod(String message) {
+    }
+
+    public int intReturnMethod() {
+        return 100;
+    }
+
+    private void privateMethod() {
+    }
+
+    protected void protectedMethod() {
     }
 }
