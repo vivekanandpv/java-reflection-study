@@ -1,8 +1,9 @@
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
 public class Main {
-    public static void main(String[] args) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public static void main(String[] args) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchFieldException {
         Class<Book> bookClassObject = Book.class;
 
         //  get the constructor with a double and string parameters
@@ -20,6 +21,24 @@ public class Main {
                 154.25,
                 "Learning Java Reflection"
         });
+
+        System.out.println(bookInstance);
+
+        System.out.println("---------------------------");
+
+        //  Get the field reference
+        //  getDeclaredField for any field (private, public, protected)
+        Field priceField = bookClassObject.getDeclaredField("price");
+        Field titleField = bookClassObject.getDeclaredField("title");
+
+        //  setting private fields is not allowed by default
+        //  explicit allowance
+        //  NB: even final fields can be set this way
+        priceField.setAccessible(true);
+        titleField.setAccessible(true);
+
+        priceField.setDouble(bookInstance, 858.59);
+        titleField.set(bookInstance, "Reflection API");
 
         System.out.println(bookInstance);
     }
