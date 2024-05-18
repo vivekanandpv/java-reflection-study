@@ -1,6 +1,7 @@
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class Main {
     public static void main(String[] args) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchFieldException {
@@ -10,7 +11,7 @@ public class Main {
         //  Watch out for the inner classes. They have a special first parameter.
         //  Using genetic type parameter Book. This avoids cast later
         Constructor<Book> bookConstructor =
-                bookClassObject.getConstructor(new Class[] {
+                bookClassObject.getConstructor(new Class[]{
                         Double.TYPE,
                         String.class
                 });
@@ -22,25 +23,17 @@ public class Main {
                 "Learning Java Reflection"
         });
 
-        System.out.println(bookInstance);
+        //  getting the method getPrice
+        Method getPriceMethod = bookClassObject.getMethod("getPrice", null);
+        double priceValue = (double) getPriceMethod.invoke(bookInstance, null);
 
-        System.out.println("---------------------------");
+        System.out.println(priceValue);
 
-        //  Get the field reference
-        //  getDeclaredField for any field (private, public, protected)
-        Field priceField = bookClassObject.getDeclaredField("price");
-        Field titleField = bookClassObject.getDeclaredField("title");
+        //  getting the method getNewMessage
+        Method getNewMessageMethod = bookClassObject.getMethod("getNewMessage", new Class[]{String.class});
+        String newMessageValue = (String) getNewMessageMethod.invoke(bookInstance, "How are you?");
 
-        //  setting private fields is not allowed by default
-        //  explicit allowance
-        //  NB: even final fields can be set this way
-        priceField.setAccessible(true);
-        titleField.setAccessible(true);
-
-        priceField.setDouble(bookInstance, 858.59);
-        titleField.set(bookInstance, "Reflection API");
-
-        System.out.println(bookInstance);
+        System.out.println(newMessageValue);
     }
 }
 
