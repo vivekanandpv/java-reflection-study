@@ -1,44 +1,52 @@
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.time.LocalDateTime;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 public class Main {
-    public static void main(String[] args) {
-        Class<Sample> sampleClassObject = Sample.class;
+    public static void main(String[] args) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        Class<Book> bookClassObject = Book.class;
 
-        //  this method returns the public fields of the class
-        //  and of all its superclasses and superinterfaces.
-        Field[] publicFields = sampleClassObject.getFields();
+        //  get the constructor with a double and string parameters
+        //  Watch out for the inner classes. They have a special first parameter.
+        //  Using genetic type parameter Book. This avoids cast later
+        Constructor<Book> bookConstructor =
+                bookClassObject.getConstructor(new Class[] {
+                        Double.TYPE,
+                        String.class
+                });
 
-        for(Field f: publicFields) {
-            System.out.println("Public fields: " + f);
-            System.out.println("\t>> Modifier:\t" + Modifier.toString(f.getModifiers()));
-        }
+        //  No cast is required because of generic type parameter we used earlier
+        //  Else, cast is required as the instance if of type Object
+        Book bookInstance = bookConstructor.newInstance(new Object[]{
+                154.25,
+                "Learning Java Reflection"
+        });
 
-        System.out.println("--------------------------");
-
-        //  all the fields declared by the class or interface
-        //  represented by this Class object.
-        //  This includes public, protected, default (package) access,
-        //  and private fields, but excludes inherited fields.
-        Field[] allFields = sampleClassObject.getDeclaredFields();
-
-        for(Field f: allFields) {
-            System.out.println("All fields: " + f);
-            System.out.println("\t>> Modifier:\t" + Modifier.toString(f.getModifiers()));
-        }
+        System.out.println(bookInstance);
     }
 }
 
-class Demo {
-    public double price = 0.0;
-    private int pages = 100;
-    protected String message = "Hi there!";
-}
+class Book {
+    private final double price;
+    private final String title;
 
-class Sample extends Demo {
-    public LocalDateTime now = LocalDateTime.now();
-    private String sampleTitle = "Title";
-    protected String secret = "Universe";
-    public static final double PI = 3.14159265359;
+    public Book(double price, String title) {
+        this.price = price;
+        this.title = title;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public String getNewMessage(String baseMessage) {
+        return "Modified Message: " + baseMessage;
+    }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "price=" + price +
+                ", title='" + title + '\'' +
+                '}';
+    }
 }
